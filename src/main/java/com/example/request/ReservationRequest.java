@@ -10,6 +10,5 @@ public class ReservationRequest {
 
   private LocalDateTime startDate;
   private LocalDateTime endDate;
-  private LocalDateTime cancelationDate;
   private String email;
 }

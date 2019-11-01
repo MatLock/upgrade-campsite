@@ -1,10 +1,10 @@
 package com.example.repository;
 
 import com.example.model.Reservation;
-import org.joda.time.DateTime;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +31,14 @@ public interface ReservationRepository extends JpaRepository<Reservation,String>
    * @param end
    * @return
    */
-  List<Reservation>  findByStartDateBetween(DateTime start, DateTime end);
+  List<Reservation>  findByStartDateBetween(LocalDateTime start, LocalDateTime end);
+
+  /**
+   * check wether a given date overlaps with other reservations or not
+   * @param date
+   * @return boolean
+   */
+  Boolean existsByStartDateAfterAndEndDateBefore(LocalDateTime date);
 
 
 }
