@@ -1,5 +1,6 @@
 package com.example.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity(name = "RESERVATION")
 @Data
+@Builder
 public class Reservation {
 
   @Id
