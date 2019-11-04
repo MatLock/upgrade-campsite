@@ -21,20 +21,12 @@ public interface ReservationRepository extends JpaRepository<Reservation,String>
   Optional<Reservation> findById(String id);
 
   /**
-   *  retrieves all the reservations by a given time range
-   * @param start
-   * @param end
-   * @return
-   */
-  List<Reservation>  findByStartDateBetween(LocalDateTime start, LocalDateTime end);
-
-  /**
    * check wether a given date overlaps with other reservations or not
    * @param startDate, endDate
    * @return boolean
    */
-  @Query(value = "SELECT COUNT(r) FROM RESERVATION r WHERE (START_DATE BETWEEN :startDate AND :endDate) OR (END_DATE BETWEEN :startDate AND :endDate)")
-  Boolean reservationOverlapsWith(@Param("startDate")LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+  @Query(value = "SELECT COUNT(*) FROM RESERVATION r WHERE (START_DATE BETWEEN :startDate AND :endDate) OR (END_DATE BETWEEN :startDate AND :endDate)")
+  Long countReservationThatOverlapsWith(@Param("startDate")LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
 
   /**

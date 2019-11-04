@@ -1,8 +1,10 @@
 package com.example.model;
 
 import com.example.controller.request.ReservationRequest;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,12 +14,14 @@ import java.time.LocalDateTime;
 @Entity(name = "RESERVATION")
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Reservation {
 
-  @Column(name = "ID",unique = true)
-  private String uid;
   @Id
-  @Column(name = "START_DATE")
+  @Column(name = "UID",unique = true)
+  private String uid;
+  @Column(name = "START_DATE",unique = true)
   private LocalDateTime startDate;
   @Column(name = "END_DATE")
   private LocalDateTime endDate;

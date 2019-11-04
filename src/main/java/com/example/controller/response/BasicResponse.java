@@ -8,6 +8,5 @@ import lombok.Data;
 public class BasicResponse {
 
   private String message;
-  private Object response;
   private Boolean error;
 }

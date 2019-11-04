@@ -90,16 +90,16 @@ public class ReservationService {
     if((DAYS.between(reservation.getEndDate(),reservation.getStartDate())) > 3){
       throw new ModelConstraintReservation("Camp reservation days cannot be greater than 3 days");
     }
-    if(DAYS.between(reservation.getStartDate(),LocalDateTime.now()) > 30){
+    if(DAYS.between(LocalDateTime.now(),reservation.getStartDate()) > 30){
       throw new ModelConstraintReservation("Camp cannot be booked more than 30 days in advance");
     }
-    if(DAYS.between(reservation.getStartDate(),LocalDateTime.now()) < 1){
+    if(DAYS.between(LocalDateTime.now(),reservation.getStartDate()) < 1){
       throw new ModelConstraintReservation("Camp cannot be booked for the same day");
     }
   }
 
   private void checkIfReservationOverlaps(Reservation reservation){
-    if(reservationRepository.reservationOverlapsWith(reservation.getStartDate(),reservation.getEndDate())){
+    if(reservationRepository.countReservationThatOverlapsWith(reservation.getStartDate(),reservation.getEndDate()) > 1){
       throw new AlreadyBookedException("Cannot book, due conflicts with other reservations");
     }
   }
@@ -107,7 +107,10 @@ public class ReservationService {
   private List<LocalDateTime> getAllDatesBetween(LocalDateTime startDate,LocalDateTime endDate){
     List<LocalDateTime> dates = new ArrayList<>();
     IntStream.range(0,(int)DAYS.between(startDate,endDate))
-             .forEach( (i) -> dates.add(startDate.plusDays(1)));
+             .forEach( (i) -> {
+               LocalDateTime date = startDate.plusDays(i).withHour(12).withMinute(0).withSecond(0);
+               dates.add(date);
+             });
     return dates;
   }
 

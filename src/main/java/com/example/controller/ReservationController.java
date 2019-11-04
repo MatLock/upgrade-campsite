@@ -13,10 +13,12 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -48,14 +50,13 @@ public class ReservationController {
   })
   @GetMapping("")
   public ResponseEntity<AvailableDaysResponse> checkAvailability
-          (@RequestParam("startDate") LocalDateTime startDate, @RequestParam("EndDate") LocalDateTime endDate){
-    LocalDateTime start = startDate == null ? LocalDateTime.now() : startDate;
-    LocalDateTime end = endDate == null ? LocalDateTime.now().plusMonths(1) : endDate;
+          (@RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+           @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate){
+    LocalDateTime start = startDate == null ? LocalDateTime.now() : startDate.atTime(12,00, 00);
+    LocalDateTime end = endDate == null ? LocalDateTime.now().plusMonths(1) : endDate.atTime(12,00, 00);
     List<LocalDateTime> availableDays = reservationService.findAvaliability(start,end);
     return new ResponseEntity<>(new AvailableDaysResponse(availableDays,null,Boolean.FALSE), HttpStatus.CREATED);
   }
-
-
 
   @ApiOperation(value = "Obtains a Reservation", response = ReservationResponse.class)
   @ApiResponses(value = {
@@ -108,6 +109,7 @@ public class ReservationController {
                       .endDate(endDate)
                       .email(reservationRequest.getEmail())
                       .uid(UUID.randomUUID().toString())
+                      .fullName(reservationRequest.getFullName())
                       .build();
 
   }
