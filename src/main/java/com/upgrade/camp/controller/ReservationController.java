@@ -1,12 +1,11 @@
-package com.example.controller;
+package com.upgrade.camp.controller;
 
-import com.example.controller.exception.BadRequestException;
-import com.example.controller.response.AvailableDaysResponse;
-import com.example.controller.response.BasicResponse;
-import com.example.model.Reservation;
-import com.example.controller.request.ReservationRequest;
-import com.example.controller.response.ReservationResponse;
-import com.example.service.ReservationService;
+import com.upgrade.camp.controller.exception.BadRequestException;
+import com.upgrade.camp.controller.response.AvailableDaysResponse;
+import com.upgrade.camp.model.Reservation;
+import com.upgrade.camp.controller.request.ReservationRequest;
+import com.upgrade.camp.controller.response.ReservationResponse;
+import com.upgrade.camp.service.ReservationService;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +50,8 @@ public class ReservationController {
            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
            @ApiParam(value = "end date of filter")@RequestParam(name = "endDate", required = false)
            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate){
-    LocalDateTime start = startDate == null ? LocalDateTime.now() : startDate.atTime(12,00, 00);
-    LocalDateTime end = endDate == null ? start.plusMonths(1): endDate.atTime(12,00, 00);
+    LocalDateTime start = startDate == null ? getLocalDateTimeWith(12,0,0,0) : startDate.atTime(12,0, 0);
+    LocalDateTime end = endDate == null ? start.plusMonths(1): endDate.atTime(12,0, 0);
     List<LocalDateTime> availableDays = reservationService.findAvailability(start.plusDays(1),end.plusDays(1));
     return new ResponseEntity<>(new AvailableDaysResponse(availableDays,null,Boolean.FALSE), HttpStatus.CREATED);
   }
@@ -102,8 +101,8 @@ public class ReservationController {
   }
 
   private Reservation toReservation(ReservationRequest reservationRequest){
-    LocalDateTime startDate = reservationRequest.getStartDate().withHour(12).withMinute(0).withSecond(1);
-    LocalDateTime endDate = reservationRequest.getEndDate().withHour(12).withMinute(0).withSecond(0);
+    LocalDateTime startDate = getLocalDateTimeWith(reservationRequest.getStartDate(),12,0,1,0);
+    LocalDateTime endDate = getLocalDateTimeWith(reservationRequest.getEndDate(),12,0,0,0);
     return Reservation.builder()
                       .bookingDate(LocalDateTime.now())
                       .startDate(startDate)
@@ -113,6 +112,14 @@ public class ReservationController {
                       .fullName(reservationRequest.getFullName())
                       .build();
 
+  }
+
+  private LocalDateTime getLocalDateTimeWith(Integer hour,Integer min,Integer seconds,Integer nano){
+    return LocalDateTime.now().withHour(hour).withMinute(min).withSecond(seconds).withNano(nano);
+  }
+
+  private LocalDateTime getLocalDateTimeWith(LocalDateTime target,Integer hour,Integer min,Integer seconds,Integer nano){
+    return target.withHour(hour).withMinute(min).withSecond(seconds).withNano(nano);
   }
 
 }

@@ -1,6 +1,6 @@
-package com.example.model;
+package com.upgrade.camp.model;
 
-import com.example.controller.request.ReservationRequest;
+import com.upgrade.camp.controller.request.ReservationRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

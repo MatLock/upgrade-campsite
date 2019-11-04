@@ -17,6 +17,7 @@
 
 	<properties>
 		<apache.commons>3.9</apache.commons>
+		<guava>21.0</guava>
 		<hamcrest>1.3</hamcrest>
 		<jackson.jaxrs.json.provider>2.2.1</jackson.jaxrs.json.provider>
 		<java.version>1.8</java.version>
@@ -36,6 +37,13 @@
 			<artifactId>jackson-jaxrs-json-provider</artifactId>
 			<version>${jackson.jaxrs.json.provider}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava}</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>com.h2database</groupId>

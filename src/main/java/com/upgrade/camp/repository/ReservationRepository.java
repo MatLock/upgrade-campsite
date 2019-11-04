@@ -1,6 +1,6 @@
-package com.example.repository;
+package com.upgrade.camp.repository;
 
-import com.example.model.Reservation;
+import com.upgrade.camp.model.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

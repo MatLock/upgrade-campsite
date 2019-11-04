@@ -1,6 +1,6 @@
-package com.example.test;
+package com.upgrade.camp.test;
 
-import com.example.CampApplication;
+import com.upgrade.camp.CampApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

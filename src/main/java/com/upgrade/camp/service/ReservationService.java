@@ -1,22 +1,21 @@
-package com.example.service;
+package com.upgrade.camp.service;
 
-import com.example.model.Reservation;
-import com.example.repository.ReservationRepository;
-import com.example.controller.request.ReservationRequest;
-import com.example.service.exception.AlreadyBookedException;
-import com.example.service.exception.ModelConstraintReservation;
-import com.example.service.exception.ReservationNotFoundException;
+import com.upgrade.camp.guava.CacheKey;
+import com.upgrade.camp.model.Reservation;
+import com.upgrade.camp.repository.ReservationRepository;
+import com.upgrade.camp.controller.request.ReservationRequest;
+import com.upgrade.camp.service.exception.AlreadyBookedException;
+import com.upgrade.camp.service.exception.ModelConstraintReservation;
+import com.upgrade.camp.service.exception.ReservationNotFoundException;
+import com.google.common.cache.LoadingCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static  java.time.temporal.ChronoUnit.DAYS;
 
@@ -25,17 +24,18 @@ public class ReservationService {
 
   @Autowired
   private ReservationRepository reservationRepository;
+  @Autowired
+  private LoadingCache<CacheKey,List<LocalDateTime>> loadingCache;
 
   public Reservation findById(String id){
     return findReservation(id);
   }
 
   public List<LocalDateTime> findAvailability(LocalDateTime startDate, LocalDateTime endDate){
-    List<Reservation> reservations = reservationRepository.getAllReservationBetween(startDate,endDate);
-    if(reservations.isEmpty()){
-      return getAllDatesBetween(startDate,endDate);
-    }
-    return obtainAvailabilityBetween(startDate,endDate,reservations);
+    return loadingCache.getUnchecked(CacheKey.builder()
+                                             .startDate(startDate)
+                                             .endDate(endDate)
+                                             .build());
   }
 
   @Transactional
@@ -44,6 +44,7 @@ public class ReservationService {
     validateConstraintsToBook(reservation);
     checkIfReservationOverlaps(reservation);
     reservationRepository.save(reservation);
+    checkForDirtyValues(reservation);
   }
 
   @Transactional
@@ -60,10 +61,14 @@ public class ReservationService {
   @Transactional
   public Reservation updateReservation(ReservationRequest reservationRequest, String id){
     Reservation reservation = findById(id);
-    reservation.replaceWith(reservationRequest);
-    validateConstraintsToBook(reservation);
-    checkIfReservationOverlaps(reservation);
-    return reservationRepository.save(reservation);
+    try{
+      reservation.replaceWith(reservationRequest);
+      validateConstraintsToBook(reservation);
+      checkIfReservationOverlaps(reservation);
+      return reservationRepository.save(reservation);
+    }finally {
+      checkForDirtyValues(reservation);
+    }
   }
 
   private Reservation findReservation(String id){
@@ -100,7 +105,6 @@ public class ReservationService {
     if(reservation.getEndDate().isBefore(reservation.getStartDate())){
       throw new ModelConstraintReservation("End Date should be bigger than Start Date");
     }
-
   }
 
   private void checkIfReservationOverlaps(Reservation reservation){
@@ -109,25 +113,15 @@ public class ReservationService {
     }
   }
 
-  private List<LocalDateTime> getAllDatesBetween(LocalDateTime startDate,LocalDateTime endDate){
-    List<LocalDateTime> dates = new ArrayList<>();
-    IntStream.range(0,(int)DAYS.between(startDate.withSecond(0),endDate.withSecond(0)))
-             .forEach( (i) -> {
-               LocalDateTime date = startDate.plusDays(i).withHour(12).withMinute(0).withSecond(0).withNano(0);
-               dates.add(date);
-             });
-    return dates;
+  private void checkForDirtyValues(Reservation reservation){
+   loadingCache.asMap().keySet().stream().filter( key ->
+     dateBetween(key.getStartDate(),reservation.getStartDate(),reservation.getEndDate()) ||
+     dateBetween(key.getEndDate(),reservation.getStartDate(),reservation.getEndDate())
+   ).forEach(key -> loadingCache.invalidate(key));
   }
 
-  private List<LocalDateTime> obtainAvailabilityBetween(LocalDateTime startDate, LocalDateTime endDate,List<Reservation> reservations){
-    List<LocalDateTime> bookedDates = reservations.stream()
-                        .map(reservation -> getAllDatesBetween(reservation.getStartDate(),reservation.getEndDate()))
-                        .flatMap(List::stream)
-                        .collect(Collectors.toList());
-    List<LocalDateTime> dates = getAllDatesBetween(startDate,endDate);
-    return dates.stream()
-            .filter(e -> !bookedDates.contains(e))
-            .collect(Collectors.toList());
+  private Boolean dateBetween(LocalDateTime target, LocalDateTime start, LocalDateTime end){
+    return target.isBefore(start) && target.isBefore(end);
   }
 
 }

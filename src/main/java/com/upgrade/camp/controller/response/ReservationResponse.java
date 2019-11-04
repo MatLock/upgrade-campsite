@@ -1,6 +1,6 @@
-package com.example.controller.response;
+package com.upgrade.camp.controller.response;
 
-import com.example.model.Reservation;
+import com.upgrade.camp.model.Reservation;
 import lombok.Builder;
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.example.controller.exception;
+package com.upgrade.camp.controller.exception;
 
 public class BadRequestException extends RuntimeException{
   public BadRequestException(String msg){

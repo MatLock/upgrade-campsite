@@ -1,4 +1,4 @@
-package com.example.service.exception;
+package com.upgrade.camp.service.exception;
 
 public class ModelConstraintReservation extends  RuntimeException{
 

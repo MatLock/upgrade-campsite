@@ -1,10 +1,10 @@
-package com.example.controller.advice;
+package com.upgrade.camp.controller.advice;
 
-import com.example.controller.exception.BadRequestException;
-import com.example.controller.response.ReservationResponse;
-import com.example.service.exception.AlreadyBookedException;
-import com.example.service.exception.ModelConstraintReservation;
-import com.example.service.exception.ReservationNotFoundException;
+import com.upgrade.camp.controller.exception.BadRequestException;
+import com.upgrade.camp.controller.response.ReservationResponse;
+import com.upgrade.camp.service.exception.AlreadyBookedException;
+import com.upgrade.camp.service.exception.ModelConstraintReservation;
+import com.upgrade.camp.service.exception.ReservationNotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

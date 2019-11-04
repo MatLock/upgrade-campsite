@@ -1,4 +1,4 @@
-package com.example.swagger;
+package com.upgrade.camp.swagger;
 
 import com.fasterxml.classmate.TypeResolver;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package com.example.controller.request;
+package com.upgrade.camp.controller.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
