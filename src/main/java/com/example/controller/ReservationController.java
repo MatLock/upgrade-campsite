@@ -7,10 +7,7 @@ import com.example.model.Reservation;
 import com.example.controller.request.ReservationRequest;
 import com.example.controller.response.ReservationResponse;
 import com.example.service.ReservationService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -50,8 +47,10 @@ public class ReservationController {
   })
   @GetMapping("")
   public ResponseEntity<AvailableDaysResponse> checkAvailability
-          (@RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-           @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate){
+          (@ApiParam(value = "start date of filter")@RequestParam(name = "startDate", required = false)
+           @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+           @ApiParam(value = "end date of filter")@RequestParam(name = "endDate", required = false)
+           @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate){
     LocalDateTime start = startDate == null ? LocalDateTime.now() : startDate.atTime(12,00, 00);
     LocalDateTime end = endDate == null ? start.plusMonths(1): endDate.atTime(12,00, 00);
     List<LocalDateTime> availableDays = reservationService.findAvailability(start.plusDays(1),end.plusDays(1));
@@ -64,7 +63,7 @@ public class ReservationController {
     @ApiResponse(code = 404, message = "Not found")
   })
   @GetMapping("/{id}")
-  public ResponseEntity<Reservation> findById(@PathVariable(name = "id") String id){
+  public ResponseEntity<Reservation> findById(@ApiParam(value = "Booking ID") @PathVariable(name = "id") String id){
     Reservation reservation = reservationService.findById(id);
     return new ResponseEntity<>(reservation,HttpStatus.OK);
   }
@@ -76,7 +75,8 @@ public class ReservationController {
     @ApiResponse(code = 400, message = "Bad Request")
   })
   @PutMapping("/{id}")
-  public ResponseEntity<ReservationResponse> updateReservation(@RequestBody ReservationRequest request, @PathVariable(name = "id") String id){
+  public ResponseEntity<ReservationResponse> updateReservation(@RequestBody ReservationRequest request,
+       @ApiParam(value = "Booking ID") @PathVariable(name = "id") String id){
     validate(request);
     Reservation reservation = reservationService.updateReservation(request,id);
     return new ResponseEntity<>(new ReservationResponse(reservation,null,Boolean.FALSE),HttpStatus.OK);
@@ -89,7 +89,8 @@ public class ReservationController {
   })
   @DeleteMapping("/{id}")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  public void deleteReservation(@PathVariable(name = "id") String id,@RequestParam(name = "email",required = false) String email){
+  public void deleteReservation(@ApiParam(value = "Booking ID") @PathVariable(name = "id") String id,
+                                @ApiParam(value = "Email of the owner") @RequestParam(name = "email",required = false) String email){
     reservationService.deleteReservation(id,email);
   }
 
