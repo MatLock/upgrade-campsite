@@ -89,7 +89,7 @@ public class ReservationController {
   })
   @DeleteMapping("/{id}")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  public void deleteReservation(@PathVariable(name = "id") String id,@RequestParam(name = "email") String email){
+  public void deleteReservation(@PathVariable(name = "id") String id,@RequestParam(name = "email",required = false) String email){
     reservationService.deleteReservation(id,email);
   }
 
