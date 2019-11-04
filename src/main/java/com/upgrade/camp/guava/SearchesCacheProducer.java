@@ -20,7 +20,7 @@ import java.util.stream.IntStream;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 @Configuration
-@ComponentScan(value = "com.upgrade")
+@ComponentScan(value = "com.upgrade.camp")
 public class SearchesCacheProducer {
 
   @Autowired

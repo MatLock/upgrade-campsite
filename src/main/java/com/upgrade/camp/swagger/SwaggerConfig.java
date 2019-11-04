@@ -31,7 +31,7 @@ public class SwaggerConfig {
                     typeResolver.resolve(List.class, LocalDateTime.class),
                     typeResolver.resolve(List.class, Date.class), Ordered.HIGHEST_PRECEDENCE))
             .select()
-            .apis(RequestHandlerSelectors.basePackage("com.example.controller"))
+            .apis(RequestHandlerSelectors.basePackage("com.upgrade.camp.controller"))
             .paths(PathSelectors.any())
             .build();
   }
