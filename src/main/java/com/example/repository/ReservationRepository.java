@@ -25,7 +25,7 @@ public interface ReservationRepository extends JpaRepository<Reservation,String>
    * @param startDate, endDate
    * @return boolean
    */
-  @Query(value = "SELECT COUNT(*) FROM RESERVATION r WHERE (START_DATE BETWEEN :startDate AND :endDate) OR (END_DATE BETWEEN :startDate AND :endDate)")
+  @Query(value = "SELECT COUNT(*) FROM RESERVATION r WHERE (START_DATE BETWEEN :startDate AND :endDate) OR (END_DATE BETWEEN :startDate AND :endDate)", nativeQuery = true)
   Long countReservationThatOverlapsWith(@Param("startDate")LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
 

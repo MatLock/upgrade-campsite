@@ -23,7 +23,7 @@ public class Reservation {
   private String uid;
   @Column(name = "START_DATE",unique = true)
   private LocalDateTime startDate;
-  @Column(name = "END_DATE")
+  @Column(name = "END_DATE",unique = true)
   private LocalDateTime endDate;
   @Column(name = "BOOKING_DATE")
   private LocalDateTime bookingDate;

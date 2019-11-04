@@ -30,7 +30,7 @@ public class ReservationService {
     return findReservation(id);
   }
 
-  public List<LocalDateTime> findAvaliability(LocalDateTime startDate, LocalDateTime endDate){
+  public List<LocalDateTime> findAvailability(LocalDateTime startDate, LocalDateTime endDate){
     List<Reservation> reservations = reservationRepository.getAllReservationBetween(startDate,endDate);
     if(reservations.isEmpty()){
       return getAllDatesBetween(startDate,endDate);
@@ -93,22 +93,27 @@ public class ReservationService {
     if(DAYS.between(LocalDateTime.now(),reservation.getStartDate()) > 30){
       throw new ModelConstraintReservation("Camp cannot be booked more than 30 days in advance");
     }
-    if(DAYS.between(LocalDateTime.now(),reservation.getStartDate()) < 1){
+    LocalDateTime today = LocalDateTime.now().withHour(12).withMinute(0).withSecond(01).withNano(0);
+    if(DAYS.between(today,reservation.getStartDate()) < 1){
       throw new ModelConstraintReservation("Camp cannot be booked for the same day");
     }
+    if(reservation.getEndDate().isBefore(reservation.getStartDate())){
+      throw new ModelConstraintReservation("End Date should be bigger than Start Date");
+    }
+
   }
 
   private void checkIfReservationOverlaps(Reservation reservation){
-    if(reservationRepository.countReservationThatOverlapsWith(reservation.getStartDate(),reservation.getEndDate()) > 1){
+    if(reservationRepository.countReservationThatOverlapsWith(reservation.getStartDate(),reservation.getEndDate()) >= 1){
       throw new AlreadyBookedException("Cannot book, due conflicts with other reservations");
     }
   }
 
   private List<LocalDateTime> getAllDatesBetween(LocalDateTime startDate,LocalDateTime endDate){
     List<LocalDateTime> dates = new ArrayList<>();
-    IntStream.range(0,(int)DAYS.between(startDate,endDate))
+    IntStream.range(0,(int)DAYS.between(startDate.withSecond(0),endDate.withSecond(0)))
              .forEach( (i) -> {
-               LocalDateTime date = startDate.plusDays(i).withHour(12).withMinute(0).withSecond(0);
+               LocalDateTime date = startDate.plusDays(i).withHour(12).withMinute(0).withSecond(0).withNano(0);
                dates.add(date);
              });
     return dates;

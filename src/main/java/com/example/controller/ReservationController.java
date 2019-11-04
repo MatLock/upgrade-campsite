@@ -53,8 +53,8 @@ public class ReservationController {
           (@RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
            @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate){
     LocalDateTime start = startDate == null ? LocalDateTime.now() : startDate.atTime(12,00, 00);
-    LocalDateTime end = endDate == null ? LocalDateTime.now().plusMonths(1) : endDate.atTime(12,00, 00);
-    List<LocalDateTime> availableDays = reservationService.findAvaliability(start,end);
+    LocalDateTime end = endDate == null ? start.plusMonths(1): endDate.atTime(12,00, 00);
+    List<LocalDateTime> availableDays = reservationService.findAvailability(start.plusDays(1),end.plusDays(1));
     return new ResponseEntity<>(new AvailableDaysResponse(availableDays,null,Boolean.FALSE), HttpStatus.CREATED);
   }
 
