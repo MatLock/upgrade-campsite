@@ -30,7 +30,6 @@ public class SwaggerConfig {
             .alternateTypeRules(AlternateTypeRules.newRule(
                     typeResolver.resolve(List.class, LocalDateTime.class),
                     typeResolver.resolve(List.class, Date.class), Ordered.HIGHEST_PRECEDENCE))
-
             .select()
             .apis(RequestHandlerSelectors.basePackage("com.example.controller"))
             .paths(PathSelectors.any())
