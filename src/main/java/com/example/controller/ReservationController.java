@@ -1,9 +1,11 @@
 package com.example.controller;
 
 import com.example.controller.exception.BadRequestException;
+import com.example.controller.response.AvailableDaysResponse;
+import com.example.controller.response.BasicResponse;
 import com.example.model.Reservation;
-import com.example.request.ReservationRequest;
-import com.example.response.ReservationResponse;
+import com.example.controller.request.ReservationRequest;
+import com.example.controller.response.ReservationResponse;
 import com.example.service.ReservationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -33,15 +36,31 @@ public class ReservationController {
   })
   @PostMapping("")
   public ResponseEntity<ReservationResponse> saveReservation(@RequestBody ReservationRequest reservationRequest){
+    validate(reservationRequest);
     Reservation reservation = toReservation(reservationRequest);
     reservationService.createReservation(reservation);
     return new ResponseEntity<>(new ReservationResponse(reservation,null,Boolean.FALSE), HttpStatus.CREATED);
   }
 
+  @ApiOperation(value = "Check available days for booking", response = AvailableDaysResponse.class)
+  @ApiResponses(value = {
+          @ApiResponse(code = 200, message = "Ok"),
+  })
+  @GetMapping("")
+  public ResponseEntity<AvailableDaysResponse> checkAvailability
+          (@RequestParam("startDate") LocalDateTime startDate, @RequestParam("EndDate") LocalDateTime endDate){
+    LocalDateTime start = startDate == null ? LocalDateTime.now() : startDate;
+    LocalDateTime end = endDate == null ? LocalDateTime.now().plusMonths(1) : endDate;
+    List<LocalDateTime> availableDays = reservationService.findAvaliability(start,end);
+    return new ResponseEntity<>(new AvailableDaysResponse(availableDays,null,Boolean.FALSE), HttpStatus.CREATED);
+  }
+
+
+
   @ApiOperation(value = "Obtains a Reservation", response = ReservationResponse.class)
   @ApiResponses(value = {
     @ApiResponse(code = 201, message = "Successfully created" ),
-    @ApiResponse(code = 404, message = "not found")
+    @ApiResponse(code = 404, message = "Not found")
   })
   @GetMapping("/{id}")
   public ResponseEntity<Reservation> findById(@PathVariable(name = "id") String id){
@@ -49,8 +68,32 @@ public class ReservationController {
     return new ResponseEntity<>(reservation,HttpStatus.OK);
   }
 
+  @ApiOperation(value = "Update a Reservation", response = ReservationResponse.class)
+  @ApiResponses(value = {
+    @ApiResponse(code = 200, message = "OK"),
+    @ApiResponse(code = 204, message = "Not Found"),
+    @ApiResponse(code = 400, message = "Bad Request")
+  })
+  @PutMapping("/{id}")
+  public ResponseEntity<ReservationResponse> updateReservation(@RequestBody ReservationRequest request, @PathVariable(name = "id") String id){
+    validate(request);
+    Reservation reservation = reservationService.updateReservation(request,id);
+    return new ResponseEntity<>(new ReservationResponse(reservation,null,Boolean.FALSE),HttpStatus.OK);
+  }
+
+  @ApiOperation(value = "Deletes a Reservation")
+  @ApiResponses(value = {
+    @ApiResponse(code = 204, message = "No Content"),
+    @ApiResponse(code = 404, message = "Not Found")
+  })
+  @DeleteMapping("/{id}")
+  @ResponseStatus(value = HttpStatus.NO_CONTENT)
+  public void deleteReservation(@PathVariable(name = "id") String id,@RequestParam(name = "email") String email){
+    reservationService.deleteReservation(id,email);
+  }
+
   private void validate(ReservationRequest reservationRequest){
-    if(StringUtils.isBlank(reservationRequest.getEmail()) ||
+    if(StringUtils.isBlank(reservationRequest.getEmail()) || StringUtils.isBlank(reservationRequest.getFullName()) ||
        reservationRequest.getStartDate() == null || reservationRequest.getEndDate() == null){
        throw new BadRequestException("All fields are mandatory");
     }

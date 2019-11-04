@@ -1,4 +1,4 @@
-package com.example.request;
+package com.example.controller.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -11,4 +11,5 @@ public class ReservationRequest {
   private LocalDateTime startDate;
   private LocalDateTime endDate;
   private String email;
+  private String fullName;
 }

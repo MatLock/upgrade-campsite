@@ -1,4 +1,4 @@
-package com.example.response;
+package com.example.controller.response;
 
 import com.example.model.Reservation;
 import lombok.Builder;

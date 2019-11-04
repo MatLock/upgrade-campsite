@@ -2,6 +2,8 @@ package com.example.repository;
 
 import com.example.model.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -10,13 +12,6 @@ import java.util.Optional;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation,String> {
-
-  /**
-   *  finds a reservation by a given email
-   * @param email
-   * @return
-   */
-  Optional<Reservation> findByEmail(String email);
 
   /**
    *  finds a reservation by its ID
@@ -35,10 +30,22 @@ public interface ReservationRepository extends JpaRepository<Reservation,String>
 
   /**
    * check wether a given date overlaps with other reservations or not
-   * @param date
+   * @param startDate, endDate
    * @return boolean
    */
-  Boolean existsByStartDateAfterAndEndDateBefore(LocalDateTime date);
+  @Query(value = "SELECT COUNT(r) FROM RESERVATION r WHERE (START_DATE BETWEEN :startDate AND :endDate) OR (END_DATE BETWEEN :startDate AND :endDate)")
+  Boolean reservationOverlapsWith(@Param("startDate")LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+
+  /**
+   * Obtains all reservation for two given dates
+   * @param startDate
+   * @param endDate
+   * @return
+     */
+  @Query(value = "SELECT r FROM RESERVATION r WHERE (START_DATE BETWEEN :startDate AND :endDate) OR (END_DATE BETWEEN :startDate AND :endDate)")
+  List<Reservation> getAllReservationBetween(@Param("startDate")LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
 
 
 }

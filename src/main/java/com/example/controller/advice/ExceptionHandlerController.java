@@ -1,7 +1,8 @@
 package com.example.controller.advice;
 
 import com.example.controller.exception.BadRequestException;
-import com.example.response.ReservationResponse;
+import com.example.controller.response.ReservationResponse;
+import com.example.service.exception.AlreadyBookedException;
 import com.example.service.exception.ModelConstraintReservation;
 import com.example.service.exception.ReservationNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -13,11 +14,18 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class ExceptionHandlerController extends ResponseEntityExceptionHandler{
 
-  @ExceptionHandler({ReservationNotFoundException.class, BadRequestException.class, ModelConstraintReservation.class})
-  public ResponseEntity<ReservationResponse> handleReservationError(Exception e){
+  @ExceptionHandler({BadRequestException.class, ModelConstraintReservation.class, AlreadyBookedException.class})
+  public ResponseEntity<ReservationResponse> handleReservationBadRequestError(Exception e){
     ReservationResponse response = createReservationResponse(e);
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
+
+  @ExceptionHandler({ReservationNotFoundException.class})
+  public ResponseEntity<ReservationResponse> handleReservationNotFoundError(Exception e){
+    ReservationResponse response = createReservationResponse(e);
+    return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+  }
+
 
   private ReservationResponse createReservationResponse(Exception e){
     return ReservationResponse.builder()
