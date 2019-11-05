@@ -1,4 +1,4 @@
-package com.upgrade.camp.unit.test;
+package com.upgrade.camp.controller;
 
 import com.upgrade.camp.controller.ReservationController;
 import com.upgrade.camp.controller.exception.BadRequestException;

@@ -1,4 +1,4 @@
-package com.upgrade.camp.test;
+package integration.test;
 
 import com.upgrade.camp.CampApplication;
 import org.junit.Test;
