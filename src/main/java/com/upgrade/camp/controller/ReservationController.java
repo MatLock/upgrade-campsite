@@ -66,9 +66,9 @@ public class ReservationController {
   })
   @GetMapping("/{id}")
   @LogExecutionTime
-  public ResponseEntity<Reservation> findById(@ApiParam(value = "Booking ID") @PathVariable(name = "id") String id){
+  public ResponseEntity<ReservationResponse> findById(@ApiParam(value = "Booking ID") @PathVariable(name = "id") String id){
     Reservation reservation = reservationService.findById(id);
-    return new ResponseEntity<>(reservation,HttpStatus.OK);
+    return new ResponseEntity<>(new ReservationResponse(reservation,null,Boolean.FALSE),HttpStatus.OK);
   }
 
   @ApiOperation(value = "Update a Reservation", response = ReservationResponse.class)
