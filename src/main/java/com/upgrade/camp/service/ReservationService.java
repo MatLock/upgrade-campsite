@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static  java.time.temporal.ChronoUnit.DAYS;
 
@@ -87,12 +88,12 @@ public class ReservationService {
 
   private void checkOwnership(Reservation reservation,String email){
     if(!reservation.getEmail().equals(email)){
-      throw new ReservationNotFoundException("Reservation not found for the given email");
+      throw new ReservationNotFoundException("Reservation not found");
     }
   }
 
   private void validateConstraintsToBook(Reservation reservation){
-    if((DAYS.between(reservation.getEndDate(),reservation.getStartDate())) > 3){
+    if((DAYS.between(reservation.getStartDate(),reservation.getEndDate())) > 3){
       throw new ModelConstraintReservation("Camp reservation days cannot be greater than 3 days");
     }
     if(DAYS.between(LocalDateTime.now(),reservation.getStartDate()) > 30){
@@ -114,14 +115,15 @@ public class ReservationService {
   }
 
   private void checkForDirtyValues(Reservation reservation){
-   loadingCache.asMap().keySet().stream().filter( key ->
+   List<CacheKey> keys = loadingCache.asMap().keySet().stream().filter( key ->
      dateBetween(key.getStartDate(),reservation.getStartDate(),reservation.getEndDate()) ||
      dateBetween(key.getEndDate(),reservation.getStartDate(),reservation.getEndDate())
-   ).forEach(key -> loadingCache.invalidate(key));
+      ).collect(Collectors.toList());
+   loadingCache.invalidateAll(keys);
   }
 
   private Boolean dateBetween(LocalDateTime target, LocalDateTime start, LocalDateTime end){
-    return target.isBefore(start) && target.isBefore(end);
+    return target.isAfter(start) && target.isBefore(end);
   }
 
 }

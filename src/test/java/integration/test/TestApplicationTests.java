@@ -23,7 +23,7 @@ public class TestApplicationTests {
 	@Autowired
 	MockMvc mockMvc;
 
-	@Test
+	//@Test
 	public void contextLoads() {
 		try{
 			MvcResult result = mockMvc.perform(
