@@ -1,5 +1,6 @@
 package com.upgrade.camp.controller;
 
+import com.upgrade.camp.aspect.LogExecutionTime;
 import com.upgrade.camp.controller.exception.BadRequestException;
 import com.upgrade.camp.controller.response.AvailableDaysResponse;
 import com.upgrade.camp.model.Reservation;
@@ -33,6 +34,7 @@ public class ReservationController {
     @ApiResponse(code = 400, message = "Request does not meet conditions")
   })
   @PostMapping("")
+  @LogExecutionTime
   public ResponseEntity<ReservationResponse> saveReservation(@RequestBody ReservationRequest reservationRequest){
     validate(reservationRequest);
     Reservation reservation = toReservation(reservationRequest);
@@ -45,6 +47,7 @@ public class ReservationController {
           @ApiResponse(code = 200, message = "Ok"),
   })
   @GetMapping("")
+  @LogExecutionTime
   public ResponseEntity<AvailableDaysResponse> checkAvailability
           (@ApiParam(value = "start date of filter")@RequestParam(name = "startDate", required = false)
            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
@@ -62,6 +65,7 @@ public class ReservationController {
     @ApiResponse(code = 404, message = "Not found")
   })
   @GetMapping("/{id}")
+  @LogExecutionTime
   public ResponseEntity<Reservation> findById(@ApiParam(value = "Booking ID") @PathVariable(name = "id") String id){
     Reservation reservation = reservationService.findById(id);
     return new ResponseEntity<>(reservation,HttpStatus.OK);
@@ -74,6 +78,7 @@ public class ReservationController {
     @ApiResponse(code = 400, message = "Bad Request")
   })
   @PutMapping("/{id}")
+  @LogExecutionTime
   public ResponseEntity<ReservationResponse> updateReservation(@RequestBody ReservationRequest request,
        @ApiParam(value = "Booking ID") @PathVariable(name = "id") String id){
     validate(request);
@@ -88,6 +93,7 @@ public class ReservationController {
   })
   @DeleteMapping("/{id}")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
+  @LogExecutionTime
   public void deleteReservation(@ApiParam(value = "Booking ID") @PathVariable(name = "id") String id,
                                 @ApiParam(value = "Email of the owner") @RequestParam(name = "email",required = false) String email){
     reservationService.deleteReservation(id,email);
