@@ -1,6 +1,5 @@
 package com.upgrade.camp.controller;
 
-import com.upgrade.camp.controller.ReservationController;
 import com.upgrade.camp.controller.exception.BadRequestException;
 import com.upgrade.camp.controller.request.ReservationRequest;
 import com.upgrade.camp.controller.response.AvailableDaysResponse;

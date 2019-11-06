@@ -23,6 +23,8 @@ import static  java.time.temporal.ChronoUnit.DAYS;
 @Service
 public class ReservationService {
 
+  private static final String EMAIL_REGEX = "^(.+)@(.+)$";
+
   @Autowired
   private ReservationRepository reservationRepository;
   @Autowired
@@ -93,6 +95,9 @@ public class ReservationService {
   }
 
   private void validateConstraintsToBook(Reservation reservation){
+    if(!reservation.getEmail().matches(EMAIL_REGEX)){
+      throw new ModelConstraintReservation("Not a valid Email");
+    }
     if((DAYS.between(reservation.getStartDate(),reservation.getEndDate())) > 3){
       throw new ModelConstraintReservation("Camp reservation days cannot be greater than 3 days");
     }

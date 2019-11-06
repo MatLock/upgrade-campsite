@@ -2,9 +2,11 @@ package com.upgrade.camp.repository;
 
 import com.upgrade.camp.model.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +15,14 @@ import java.util.Optional;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation,String> {
 
+
+  /**
+   * Only for Integration Test
+   */
+  @Transactional
+  @Modifying
+  @Query(value = "DELETE FROM RESERVATION",nativeQuery = true)
+  void truncate();
   /**
    *  finds a reservation by its ID
    * @param id

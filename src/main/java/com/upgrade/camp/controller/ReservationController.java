@@ -56,7 +56,7 @@ public class ReservationController {
     LocalDateTime start = startDate == null ? getLocalDateTimeWith(12,0,0,0) : startDate.atTime(12,0, 0);
     LocalDateTime end = endDate == null ? start.plusMonths(1): endDate.atTime(12,0, 0);
     List<LocalDateTime> availableDays = reservationService.findAvailability(start.plusDays(1),end.plusDays(1));
-    return new ResponseEntity<>(new AvailableDaysResponse(availableDays,null,Boolean.FALSE), HttpStatus.CREATED);
+    return new ResponseEntity<>(new AvailableDaysResponse(availableDays,null,Boolean.FALSE), HttpStatus.OK);
   }
 
   @ApiOperation(value = "Obtains a Reservation", response = ReservationResponse.class)
