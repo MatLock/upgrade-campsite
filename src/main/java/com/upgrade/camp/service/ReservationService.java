@@ -122,8 +122,7 @@ public class ReservationService {
   private void checkForDirtyValues(Reservation reservation){
    List<CacheKey> keys = loadingCache.asMap().keySet().stream().filter( key -> {
      return loadingCache.getUnchecked(key).stream().anyMatch(date ->{
-                     return  dateBetween(date, reservation.getStartDate(), reservation.getEndDate()) ||
-                             dateBetween(date, reservation.getStartDate(), reservation.getEndDate());
+                     return  dateBetween(date, reservation.getStartDate(), reservation.getEndDate());
      });
    }).collect(Collectors.toList());
    loadingCache.invalidateAll(keys);
