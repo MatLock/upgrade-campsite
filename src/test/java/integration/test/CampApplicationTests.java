@@ -182,7 +182,7 @@ public class CampApplicationTests {
 
   @SneakyThrows
   private MvcResult checkAvailability(){
-    return mockMvc.perform(MockMvcRequestBuilders.get("/reservation")
+    return mockMvc.perform(MockMvcRequestBuilders.get("/reservation/availability")
                                                  .accept(MediaType.APPLICATION_JSON))
                                                  .andReturn();
   }

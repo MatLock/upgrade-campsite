@@ -46,7 +46,7 @@ public class ReservationController {
   @ApiResponses(value = {
           @ApiResponse(code = 200, message = "Ok"),
   })
-  @GetMapping("")
+  @GetMapping("/availability")
   @LogExecutionTime
   public ResponseEntity<AvailableDaysResponse> checkAvailability
           (@ApiParam(value = "start date of filter")@RequestParam(name = "startDate", required = false)
