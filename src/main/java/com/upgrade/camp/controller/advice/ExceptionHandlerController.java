@@ -29,7 +29,7 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler{
 
   @ExceptionHandler({ConstraintViolationException.class})
   public ResponseEntity<ReservationResponse> handleConstraintViolationError(Exception e){
-    ReservationResponse response = createReservationResponse("Cannot book due conflict with other reservations");
+    ReservationResponse response = createReservationResponse("Cannot book, due conflicts with other reservations");
     return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
   }
 

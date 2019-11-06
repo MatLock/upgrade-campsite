@@ -62,7 +62,7 @@ public class CampApplicationTests {
                             .registerTypeAdapter(LocalDateTime.class,new CustomJsonSerializer())
                             .create();
     reservationRequest = ReservationRequest.builder()
-                                           .startDate(LocalDateTime.now().plusDays(1))
+                                           .startDate(LocalDateTime.now().plusDays(2))
                                            .endDate(LocalDateTime.now().plusDays(4))
                                            .email(EMAIL)
                                            .fullName(FULL_NAME)
@@ -70,8 +70,10 @@ public class CampApplicationTests {
   }
 
   @After
+  @SneakyThrows
   public void cleanUp(){
     reservationRepository.truncate();
+    Thread.sleep(1000);
   }
 
   @Test
@@ -92,7 +94,7 @@ public class CampApplicationTests {
     MvcResult result = checkAvailability();
     AvailableDaysResponse response = gson.fromJson(result.getResponse().getContentAsString(),AvailableDaysResponse.class);
     assertThat(response.getMessage(),is(nullValue()));
-    assertThat(response.getResponse().size(),is(27));
+    assertThat(response.getResponse().size(),is(28));
     assertThat(response.getError(),is(Boolean.FALSE));
     assertThat(result.getResponse().getStatus(),is(HttpStatus.OK.value()));
   }
@@ -128,8 +130,8 @@ public class CampApplicationTests {
   @SneakyThrows
   public void createWithReservationThatOverlapsWithAnotherTest(){
     createReservation();
-    reservationRequest.setStartDate(LocalDateTime.now().plusDays(2));
-    reservationRequest.setEndDate(LocalDateTime.now().plusDays(5));
+    reservationRequest.setStartDate(LocalDateTime.now().plusDays(3));
+    reservationRequest.setEndDate(LocalDateTime.now().plusDays(6));
     MvcResult result = createReservation();
     ReservationResponse reservationResponse = gson.fromJson(result.getResponse().getContentAsString(),ReservationResponse.class);
     assertThat(result.getResponse().getStatus(),is(HttpStatus.BAD_REQUEST.value()));
@@ -208,6 +210,12 @@ public class CampApplicationTests {
               .andReturn();
   }
 
+    /**
+     * there is no way you can tell which is the successful one  and which is the failed one
+     * so it is needed to contemplate both result
+     * @param r1
+     * @param r2
+     */
   @SneakyThrows
   private void assertsOnConcurrentTest(MvcResult r1, MvcResult r2){
     int r1Status = r1.getResponse().getStatus();
@@ -216,13 +224,24 @@ public class CampApplicationTests {
      fail("Concurrent call didn't work!!!");
     }
     if (r1Status == 201){
-      ReservationResponse reservationResponse =  gson.fromJson(r1.getResponse().getContentAsString(),ReservationResponse.class);
-      assertThat(reservationResponse.getError(),is(Boolean.FALSE));
-      assertThat(reservationResponse.getResponse(),is(notNullValue()));
-      assertThat(reservationResponse.getMessage(),is(nullValue()));
+      assertSuccessful(r1);
+      assertFailed(r2);
       return;
     }
-    ReservationResponse reservationResponse2 =  gson.fromJson(r2.getResponse().getContentAsString(),ReservationResponse.class);
+    assertSuccessful(r2);
+    assertFailed(r1);
+  }
+
+  @SneakyThrows
+  private void assertSuccessful(MvcResult result){
+    ReservationResponse reservationResponse =  gson.fromJson(result.getResponse().getContentAsString(),ReservationResponse.class);
+    assertThat(reservationResponse.getError(),is(Boolean.FALSE));
+    assertThat(reservationResponse.getResponse(),is(notNullValue()));
+    assertThat(reservationResponse.getMessage(),is(nullValue()));
+  }
+  @SneakyThrows
+  private  void assertFailed(MvcResult result){
+    ReservationResponse reservationResponse2 =  gson.fromJson(result.getResponse().getContentAsString(),ReservationResponse.class);
     assertThat(reservationResponse2.getResponse(),is(nullValue()));
     assertThat(reservationResponse2.getError(),is(Boolean.TRUE));
     assertThat(reservationResponse2.getMessage(),is(OVERLAPS_EX));

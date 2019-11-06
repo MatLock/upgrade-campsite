@@ -43,8 +43,8 @@ public class ReservationServiceTest {
   private static final String UID = UUID.randomUUID().toString();
   private static final String NEW_FULL_NAME = "NEW NAME";
   private static final String NEW_EMAIL = "NEW_EMAIL";
-  private static final LocalDateTime START_DATE = LocalDateTime.now().plusDays(1);
-  private static final LocalDateTime END_DATE = START_DATE.plusDays(3);
+  private static final LocalDateTime START_DATE = LocalDateTime.now().plusDays(2);
+  private static final LocalDateTime END_DATE = START_DATE.plusDays(2);
 
   @Mock
   private Reservation reservation;
@@ -114,7 +114,7 @@ public class ReservationServiceTest {
 
   @Test
   public void testCreationFailsDueModelConstraint(){
-    when(reservation.getEndDate()).thenReturn(LocalDateTime.now().plusDays(5));
+    when(reservation.getEndDate()).thenReturn(START_DATE.plusDays(5));
     expectedException.expect(ModelConstraintReservation.class);
     expectedException.expectMessage(RESERVATION_BOOKING_DATES_HAS_MORE_THAN_3_DAYS);
     reservationService.createReservation(reservation);
