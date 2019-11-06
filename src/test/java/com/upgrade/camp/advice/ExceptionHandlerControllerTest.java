@@ -24,7 +24,7 @@ public class ExceptionHandlerControllerTest {
 
   private static final String BAD_REQUEST_EX = "bad request exception";
   private static final String RESERVATION_NOT_FOUND_EX = "reservation not found";
-  private static final String CONSTRAINT_EX_PRETTY = "Cannot book due conflict with other reservations";
+  private static final String CONSTRAINT_EX_PRETTY = "Cannot book, due conflicts with other reservations";
 
   @Mock
   private BadRequestException badRequestException;
