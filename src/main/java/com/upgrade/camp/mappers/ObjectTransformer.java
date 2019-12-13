@@ -20,6 +20,11 @@ import static com.upgrade.camp.mappers.PropertyMapper.*;
 @Slf4j
 public class ObjectTransformer {
 
+
+    /**
+     * CLASS used to transform a JSON object into another using a file as a map (research)
+     */
+
     private static final String DOT = ".";
     private static final Integer ONE = 1;
     private static final Integer ZERO = 0;
