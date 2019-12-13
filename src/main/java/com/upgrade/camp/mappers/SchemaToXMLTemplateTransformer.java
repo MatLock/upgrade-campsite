@@ -12,6 +12,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 public class SchemaToXMLTemplateTransformer {
 
+
+    /**
+     * class used to transform JSON Schema to XML template
+     */
+
     @SneakyThrows
     public static Document toXMLTemplate(JsonNode schema){
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

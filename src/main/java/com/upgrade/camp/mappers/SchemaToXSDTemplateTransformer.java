@@ -12,6 +12,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 public class SchemaToXSDTemplateTransformer {
 
+
+    /**
+     * class used to transform JSON Schema to XSD Template
+     */
     private static final String DATE_FORMAT = "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2}).(\\d{4})Z";
 
 
