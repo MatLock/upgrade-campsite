@@ -23,7 +23,7 @@
 		<hamcrest>1.3</hamcrest>
 		<jackson.jaxrs.json.provider>2.2.1</jackson.jaxrs.json.provider>
 		<java.version>1.8</java.version>
-		<spring.swagger>2.9.2</spring.swagger>
+		<spring.swagger>2.10.0</spring.swagger>
 	</properties>
 
 	<dependencies>
